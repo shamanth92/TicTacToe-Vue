@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
-const props = defineProps(['startGameOption', 'playerOne', 'playerTwo', 'endGame', 'restartGame'])
+const props = defineProps(['startGameOption', 'playerOne', 'playerTwo', 'endGame', 'restartGame', 'startNew'])
 
 const emit = defineEmits<{
   (e: 'send-wins', payload: { playerOneWins: number; playerTwoWins: number }): void
@@ -32,6 +32,15 @@ const drawn = ref(false)
 const winsOne = ref(0)
 const winsTwo = ref(0)
 
+onMounted(() => {
+  const savedState = localStorage.getItem('ticTacToeWinsChild')
+  if (savedState) {
+      const parsedState = JSON.parse(savedState)
+      winsOne.value = parsedState.winsOne || winsOne.value
+      winsTwo.value = parsedState.winsTwo || winsTwo.value
+  }
+})
+
 watch(visible, (newVal, oldVal) => {
   console.log(`count changed from ${oldVal} to ${newVal}`, visible)
   if (visible.value) {
@@ -45,6 +54,34 @@ watch(visible, (newVal, oldVal) => {
 
 watch(
   () => props.restartGame, // getter function
+  () => {
+    console.log('props.restartGame: ', props.restartGame);
+    if (props.restartGame) {
+      boxState.value = {
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: '',
+        6: '',
+        7: '',
+        8: '',
+        9: '',
+      }
+      endGameNow.value = false
+      winner.value = ''
+      numClicks.value = 0
+      winnerIndices.value = []
+      visible.value = false
+      drawn.value = false
+      winsOne.value = 0
+      winsTwo.value = 0
+    }
+  }
+)
+
+watch(
+  () => props.startNew, // getter function
   () => {
     if (props.restartGame) {
       boxState.value = {
@@ -64,9 +101,19 @@ watch(
       winnerIndices.value = []
       visible.value = false
       drawn.value = false
+      winsOne.value = 0
+      winsTwo.value = 0
     }
   }
 )
+
+watch([winsOne, winsTwo], () => {
+  const state = {
+    winsOne: winsOne.value,
+    winsTwo: winsTwo.value,
+  }
+  localStorage.setItem('ticTacToeWinsChild', JSON.stringify(state))
+})
 
 function boxClicked(index: number) {
   numClicks.value = numClicks.value + 1

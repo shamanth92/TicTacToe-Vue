@@ -2,10 +2,7 @@
 
 
 <script setup lang="ts">
-import { watch } from 'vue'
-import confetti from 'canvas-confetti'
-
-const props = defineProps([
+defineProps([
   'playerOne',
   'playerTwo',
   'playerOneWins',
@@ -24,6 +21,10 @@ function startNewGame() {
     startNew: true,
     restartGame: false,
   })
+  localStorage.removeItem('ticTacToeState')
+  localStorage.removeItem('ticTacToeWins')
+  localStorage.removeItem('ticTacToeNum')
+  localStorage.removeItem('ticTacToeWinsChild')
 }
 
 function restartOldGame() {
@@ -70,6 +71,7 @@ function restartOldGame() {
     <div class="flex justify-center pt-6" v-if="!endGame">
       <button
         class="bg-gray-500 hover:bg-gray-800 text-white px-6 py-2 rounded-lg shadow font-serif cursor-pointer"
+        @click="startNewGame"
       >
         Start New Game
       </button>

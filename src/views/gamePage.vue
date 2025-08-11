@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import TicTacToeGame from './../components/tictactoeGame.vue'
-import scoreBoard from '@/components/scoreBoard.vue'
-import { reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import confetti from 'canvas-confetti'
+import TicTacToeGame from '@/components/TicTacToeGame.vue'
+import scoreBoard from '@/components/ScoreBoard.vue'
 
 const playerOne = ref('')
 const playerTwo = ref('')
@@ -20,6 +20,27 @@ const endGame = ref(false)
 const startNew = ref(false)
 
 const restartGame = ref(false)
+
+onMounted(() => {
+  const savedState = localStorage.getItem('ticTacToeState')
+  const winState = localStorage.getItem('ticTacToeWins')
+  const numState = localStorage.getItem('ticTacToeNum')
+  if (savedState) {
+      const parsedState = JSON.parse(savedState)
+      playerOne.value = parsedState.playerOne || playerOne.value
+      playerTwo.value = parsedState.playerTwo || playerTwo.value
+      startGameOption.value = parsedState.startGameOption || startGameOption.value
+  }
+  if (winState) {
+      const parsedState = JSON.parse(winState)
+      playerOneWins.value = parsedState.playerOneWins || playerOneWins.value
+      playerTwoWins.value = parsedState.playerTwoWins || playerTwoWins.value
+  }
+    if (numState) {
+      const parsedState = JSON.parse(numState)
+      selectedOption.value = parsedState.selectedOption || selectedOption.value
+  }
+})
 
 const errors = reactive({
   playerOne: '',
@@ -61,6 +82,10 @@ function startNewGame() {
 }
 
 watch([playerOne, playerTwo, selectedOption], () => {
+  const state = {
+    selectedOption: selectedOption.value,
+  }
+  localStorage.setItem('ticTacToeNum', JSON.stringify(state))
   if (playerOne.value.trim()) {
     errors.playerOne = ''
   }
@@ -73,11 +98,11 @@ watch([playerOne, playerTwo, selectedOption], () => {
 })
 
 watch([playerOneWins, playerTwoWins], () => {
-  console.log(
-    'selectedOption: ',
-    selectedOption.value,
-    playerOneWins.value === 2 || playerTwoWins.value === 2
-  )
+  const state = {
+    playerOneWins: playerOneWins.value,
+    playerTwoWins: playerTwoWins.value,
+  }
+  localStorage.setItem('ticTacToeWins', JSON.stringify(state))
   switch (selectedOption.value) {
     case '3':
       if (playerOneWins.value === 2 || playerTwoWins.value === 2) {
@@ -130,6 +155,7 @@ watch(startNew, () => {
     playerOneWins.value = 0
     playerTwoWins.value = 0
     startNew.value = false
+    restartGame.value = false
   }
 })
 watch(restartGame, () => {
@@ -137,8 +163,17 @@ watch(restartGame, () => {
     playerOneWins.value = 0
     playerTwoWins.value = 0
     endGame.value = false
-    restartGame.value = false
+    // restartGame.value = false
   }
+})
+
+watch([playerOne, playerTwo, startGameOption], () => {
+  const state = {
+    playerOne: playerOne.value,
+    playerTwo: playerTwo.value,
+    startGameOption: startGameOption.value
+  }
+  localStorage.setItem('ticTacToeState', JSON.stringify(state))
 })
 </script>
 
@@ -239,6 +274,7 @@ watch(restartGame, () => {
         @send-wins="updateWins"
         :endGame="endGame"
         :restartGame="restartGame"
+        :startNew="startNew"
       />
     </div>
     <div
@@ -265,4 +301,8 @@ watch(restartGame, () => {
 
 
 
-//Restart
+//Restart - Fix to check deployment
+//Test Cases
+//Dockerfile
+//Deploy
+//More Games
