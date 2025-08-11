@@ -26,19 +26,19 @@ onMounted(() => {
   const winState = localStorage.getItem('ticTacToeWins')
   const numState = localStorage.getItem('ticTacToeNum')
   if (savedState) {
-      const parsedState = JSON.parse(savedState)
-      playerOne.value = parsedState.playerOne || playerOne.value
-      playerTwo.value = parsedState.playerTwo || playerTwo.value
-      startGameOption.value = parsedState.startGameOption || startGameOption.value
+    const parsedState = JSON.parse(savedState)
+    playerOne.value = parsedState.playerOne || playerOne.value
+    playerTwo.value = parsedState.playerTwo || playerTwo.value
+    startGameOption.value = parsedState.startGameOption || startGameOption.value
   }
   if (winState) {
-      const parsedState = JSON.parse(winState)
-      playerOneWins.value = parsedState.playerOneWins || playerOneWins.value
-      playerTwoWins.value = parsedState.playerTwoWins || playerTwoWins.value
+    const parsedState = JSON.parse(winState)
+    playerOneWins.value = parsedState.playerOneWins || playerOneWins.value
+    playerTwoWins.value = parsedState.playerTwoWins || playerTwoWins.value
   }
-    if (numState) {
-      const parsedState = JSON.parse(numState)
-      selectedOption.value = parsedState.selectedOption || selectedOption.value
+  if (numState) {
+    const parsedState = JSON.parse(numState)
+    selectedOption.value = parsedState.selectedOption || selectedOption.value
   }
 })
 
@@ -171,7 +171,7 @@ watch([playerOne, playerTwo, startGameOption], () => {
   const state = {
     playerOne: playerOne.value,
     playerTwo: playerTwo.value,
-    startGameOption: startGameOption.value
+    startGameOption: startGameOption.value,
   }
   localStorage.setItem('ticTacToeState', JSON.stringify(state))
 })
@@ -260,49 +260,59 @@ watch([playerOne, playerTwo, startGameOption], () => {
         </div>
       </form>
     </div>
-    <div
-      class="flex flex-col justify-center items-center gap-4"
-      v-if="playerOne.length > 0 && playerTwo.length > 0 && startGameOption"
+    <Transition
+      enter-active-class="transition-opacity duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-200"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
     >
-      <div class="border-2 border-gray-500 bg-gray-500 text-xl rounded-md w-fit">
-        <p class="text-white p-6 font-serif">Tic Tac Toe</p>
+      <div
+        class="flex flex-col justify-center items-center gap-4"
+        v-if="playerOne.length > 0 && playerTwo.length > 0 && startGameOption"
+      >
+        <div class="border-2 border-gray-500 bg-gray-500 text-xl rounded-md w-fit">
+          <p class="text-white p-6 font-serif">Tic Tac Toe</p>
+        </div>
+        <TicTacToeGame
+          :startGameOption="startGameOption"
+          :playerOne="playerOne"
+          :playerTwo="playerTwo"
+          @send-wins="updateWins"
+          :endGame="endGame"
+          :restartGame="restartGame"
+          :startNew="startNew"
+        /></div
+    ></Transition>
+
+    <Transition
+      enter-active-class="transition-opacity duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-200"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        class="flex flex-col gap-3 p-8 h-screen items-center justify-center"
+        v-if="playerOne.length > 0 && playerTwo.length > 0 && startGameOption"
+      >
+        <scoreBoard
+          :playerOne="playerOne"
+          :playerTwo="playerTwo"
+          :playerOneWins="playerOneWins"
+          :playerTwoWins="playerTwoWins"
+          :selectedOption="selectedOption"
+          :endGame="endGame"
+          :gameWinner="gameWinner"
+          @finish-game="finishGame"
+        />
       </div>
-      <TicTacToeGame
-        :startGameOption="startGameOption"
-        :playerOne="playerOne"
-        :playerTwo="playerTwo"
-        @send-wins="updateWins"
-        :endGame="endGame"
-        :restartGame="restartGame"
-        :startNew="startNew"
-      />
-    </div>
-    <div
-      class="flex flex-col gap-3 p-8 h-screen items-center justify-center"
-      v-if="playerOne.length > 0 && playerTwo.length > 0 && startGameOption"
-    >
-      <scoreBoard
-        :playerOne="playerOne"
-        :playerTwo="playerTwo"
-        :playerOneWins="playerOneWins"
-        :playerTwoWins="playerTwoWins"
-        :selectedOption="selectedOption"
-        :endGame="endGame"
-        :gameWinner="gameWinner"
-        @finish-game="finishGame"
-      />
-    </div>
+    </Transition>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
 
-
-
-
-//Restart - Fix to check deployment
-//Test Cases
-//Dockerfile
-//Deploy
-//More Games
+//Restart - Fix to check deployment //Test Cases //Dockerfile //Deploy //More Games
