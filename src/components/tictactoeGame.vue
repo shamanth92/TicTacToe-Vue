@@ -1,13 +1,21 @@
 <script setup lang="ts">
+import { useGameLogic } from '@/composables/tictactoeLogic'
 import { onMounted, ref, watch } from 'vue'
 
-const props = defineProps(['startGameOption', 'playerOne', 'playerTwo', 'endGame', 'restartGame', 'startNew'])
+const props = defineProps([
+  'startGameOption',
+  'playerOne',
+  'playerTwo',
+  'endGame',
+  'restartGame',
+  'startNew',
+])
 
 const emit = defineEmits<{
   (e: 'send-wins', payload: { playerOneWins: number; playerTwoWins: number }): void
 }>()
 
-type BoxState = {
+export type BoxState = {
   [key: number]: string
 }
 
@@ -35,9 +43,9 @@ const winsTwo = ref(0)
 onMounted(() => {
   const savedState = localStorage.getItem('ticTacToeWinsChild')
   if (savedState) {
-      const parsedState = JSON.parse(savedState)
-      winsOne.value = parsedState.winsOne || winsOne.value
-      winsTwo.value = parsedState.winsTwo || winsTwo.value
+    const parsedState = JSON.parse(savedState)
+    winsOne.value = parsedState.winsOne || winsOne.value
+    winsTwo.value = parsedState.winsTwo || winsTwo.value
   }
 })
 
@@ -55,7 +63,7 @@ watch(visible, (newVal, oldVal) => {
 watch(
   () => props.restartGame, // getter function
   () => {
-    console.log('props.restartGame: ', props.restartGame);
+    console.log('props.restartGame: ', props.restartGame)
     if (props.restartGame) {
       boxState.value = {
         1: '',
@@ -77,7 +85,7 @@ watch(
       winsOne.value = 0
       winsTwo.value = 0
     }
-  }
+  },
 )
 
 watch(
@@ -104,7 +112,7 @@ watch(
       winsOne.value = 0
       winsTwo.value = 0
     }
-  }
+  },
 )
 
 watch([winsOne, winsTwo], () => {
@@ -118,37 +126,16 @@ watch([winsOne, winsTwo], () => {
 function boxClicked(index: number) {
   numClicks.value = numClicks.value + 1
   boxState.value[index + 1] = numClicks.value % 2 !== 0 ? 'X' : 'O'
-  const scenarioOne =
-    Object.values(boxState.value)[0] === Object.values(boxState.value)[1] &&
-    Object.values(boxState.value)[1] === Object.values(boxState.value)[2]
-
-  const scenarioTwo =
-    Object.values(boxState.value)[3] === Object.values(boxState.value)[4] &&
-    Object.values(boxState.value)[4] === Object.values(boxState.value)[5]
-
-  const scenarioThree =
-    Object.values(boxState.value)[6] === Object.values(boxState.value)[7] &&
-    Object.values(boxState.value)[7] === Object.values(boxState.value)[8]
-
-  const scenarioFour =
-    Object.values(boxState.value)[0] === Object.values(boxState.value)[3] &&
-    Object.values(boxState.value)[3] === Object.values(boxState.value)[6]
-
-  const scenarioFive =
-    Object.values(boxState.value)[1] === Object.values(boxState.value)[4] &&
-    Object.values(boxState.value)[4] === Object.values(boxState.value)[7]
-
-  const scenarioSix =
-    Object.values(boxState.value)[2] === Object.values(boxState.value)[5] &&
-    Object.values(boxState.value)[5] === Object.values(boxState.value)[8]
-
-  const scenarioSeven =
-    Object.values(boxState.value)[0] === Object.values(boxState.value)[4] &&
-    Object.values(boxState.value)[4] === Object.values(boxState.value)[8]
-
-  const scenrioEight =
-    Object.values(boxState.value)[2] === Object.values(boxState.value)[4] &&
-    Object.values(boxState.value)[4] === Object.values(boxState.value)[6]
+  const {
+    scenarioOne,
+    scenarioTwo,
+    scenarioThree,
+    scenarioFour,
+    scenarioFive,
+    scenarioSix,
+    scenarioSeven,
+    scenrioEight,
+  } = useGameLogic(boxState)
 
   if (
     numClicks.value > 4 &&
@@ -233,11 +220,12 @@ function resetGame() {
           winnerIndices.includes(n)
             ? 'bg-green-500'
             : Object.values(boxState)[n]
-            ? 'bg-orange-500'
-            : 'bg-gray-500',
+              ? 'bg-orange-500'
+              : 'bg-gray-500',
         ]"
         @click="boxClicked(n)"
         :disabled="!startGameOption || endGameNow || drawn"
+        id="tic-tac-toe"
       >
         {{ Object.values(boxState)[n] }}
       </button>
