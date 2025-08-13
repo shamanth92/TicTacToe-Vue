@@ -11,7 +11,7 @@
     "start": "vite --host 0.0.0.0 --port 5173",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest --config vitest.config.ts",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
