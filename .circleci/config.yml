@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   lint:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:24.5.0
     steps:
       - checkout
       - run:
@@ -15,19 +15,20 @@ jobs:
 
   test:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:24.5.0
     steps:
       - checkout
       - run:
           name: Install Dependencies
           command: npm install
+      - run: ls -R src/components
       - run:
           name: Run Tests
           command: npm run test
 
   deploy_to_vercel:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:24.5.0
     environment:
       VERCEL_ORG_ID: $VERCEL_ORG_ID
       VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID
