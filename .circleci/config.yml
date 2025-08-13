@@ -51,17 +51,17 @@ workflows:
       - lint:
           filters:
             branches:
-              only: /main/
+              only: main
       - test:
           requires:
             - lint
           filters:
             branches:
-              only: /main/
+              only: main
       - deploy_to_vercel:
           requires:
             - lint
             - test
           filters:
             branches:
-              only: /main/
+              only: main
