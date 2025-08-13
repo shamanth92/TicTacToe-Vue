@@ -30,8 +30,8 @@ jobs:
     docker:
       - image: cimg/node:24.5.0
     environment:
-      VERCEL_ORG_ID: $VERCEL_ORG_ID
-      VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID
+      VERCEL_ORG_ID: VERCEL_ORG_ID
+      VERCEL_PROJECT_ID: VERCEL_PROJECT_ID
     steps:
       - checkout
       - run:
@@ -40,13 +40,13 @@ jobs:
       - run: echo "VERCEL_PROJECT_ID=${VERCEL_PROJECT_ID}"
       - run:
           name: Pull Vercel Environment Information
-          command: npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          command: npx vercel pull --yes --environment=production --token=VERCEL_TOKEN
       - run:
           name: Build Project Artifacts
-          command: npx vercel build --prod --token=$VERCEL_TOKEN
+          command: npx vercel build --prod --token=VERCEL_TOKEN
       - run:
           name: Deploy Project Artifacts to Vercel
-          command: npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+          command: npx vercel deploy --prebuilt --prod --token=VERCEL_TOKEN
 
 workflows:
   version: 2
