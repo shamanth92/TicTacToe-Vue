@@ -12,6 +12,7 @@ jobs:
       - run:
           name: Run lint
           command: npm run lint
+
   test:
     docker:
       - image: cimg/node:latest
@@ -23,6 +24,7 @@ jobs:
       - run:
           name: Run Tests
           command: npm run test
+
   deploy_to_vercel:
     docker:
       - image: cimg/node:latest
@@ -48,16 +50,10 @@ workflows:
   version: 2
   lint_test_deploy_vercel:
     jobs:
-      - lint:
-          filters:
-            branches:
-              only: main
+      - lint
       - test:
           requires:
             - lint
-          filters:
-            branches:
-              only: main
       - deploy_to_vercel:
           requires:
             - lint
