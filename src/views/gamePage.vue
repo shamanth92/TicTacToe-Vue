@@ -314,5 +314,3 @@ watch([playerOne, playerTwo, startGameOption], () => {
 </template>
 
 <style scoped></style>
-
-//Restart - Fix to check deployment //Actions //Deploy //More Games
